@@ -153,63 +153,61 @@ local spinning_rect = {
     children = {
         {
             name = "Rotating Rectangle",
-        type = "rectangle",
-        visible = true,
-        paint = {
-            color = COLOR.RANDOM(),
-            mode = DRAW_MODE.FILL,
-        },
-        transform = {
-            position = { x = 10, y = 10 },
-            size = { width = 200, height = 200 },
-            origin = { x = -100, y = -100 },
-            rotation = 0.01
-        },
-        vars = {
-            counter = 0,
-            interval = 3
-        },
-        events = {
-            update = function(app, node, dt)
-                node.transform.rotation = (node.transform.rotation or 0) - 0.01
-                node.vars.counter = node.vars.counter + dt
-                if node.vars.counter > node.vars.interval then
-                    node.vars.counter = 0
-                    node.paint.color = COLOR.RANDOM()
+            type = "rectangle",
+            visible = true,
+            paint = {
+                color = COLOR.RANDOM(),
+                mode = DRAW_MODE.FILL,
+            },
+            transform = {
+                position = { x = 10, y = 10 },
+                size = { width = 200, height = 200 },
+                origin = { x = -100, y = -100 },
+                rotation = 0.01
+            },
+            timers = {
+                {
+                    interval = 5,
+                    callback = function(app, node, dt)
+                        node.paint.color = COLOR.RANDOM()
+                    end
+                }
+            },
+            events = {
+                update = function(app, node, dt)
+                    node.transform.rotation = (node.transform.rotation or 0) - 0.01
                 end
-            end
-        },
-        children = {
-            {
-                type = "text",
-                visible = true,
-                text = {
-                    value = "Hello World!"
-                },
-                paint = {
-                    color = COLOR.WHITE,
-                },
-                transform = {
-                    position = { x = 100, y = 100 },
-                    origin = { x = 50, y = 50 },
-                    rotation = 0.1
-                },
-                vars = {
-                    counter = 0,
-                    interval = 3
-                },
-                events = {
-                    update = function(app, node, dt)
-                        node.vars.counter = node.vars.counter + dt
-                        if node.vars.counter > node.vars.interval then
-                            node.vars.counter = 0
-                            node.paint.color = COLOR.RANDOM()
+            },
+            children = {
+                {
+                    type = "text",
+                    visible = true,
+                    text = {
+                        value = "Hello World!"
+                    },
+                    paint = {
+                        color = COLOR.WHITE,
+                    },
+                    transform = {
+                        position = { x = 100, y = 100 },
+                        origin = { x = 50, y = 50 },
+                        rotation = 0.1
+                    },
+                    timers = {
+                        {
+                            interval = 3,
+                            callback = function(app, node)
+                                node.paint.color = COLOR.RANDOM()
+                            end
+                        }
+                    },
+                    events = {
+                        update = function(app, node, dt)
+                            node.transform.rotation = (node.transform.rotation or 0) - 0.01
                         end
-                        node.transform.rotation = node.transform.rotation + 0.1
-                    end,
+                    },
                 }
             }
-        }
         }
     }
 }
@@ -229,18 +227,13 @@ local blinking_text = {
     transform = {
         position = { x = 100, y = 200 }
     },
-    vars = {
-        counter = 0,
-        interval = 0.5
-    },
-    events = {
-        update = function(app, node, dt)
-            node.vars.counter = node.vars.counter + dt
-            if node.vars.counter > node.vars.interval then
-                node.vars.counter = 0
+    timers = {
+        {
+            interval = 1,
+            callback = function(app, node)
                 node.visible = not node.visible
             end
-        end
+        }
     }
 }
 
@@ -274,14 +267,13 @@ START(resources, {
         counter = 0,
         interval = 1
     },
-    events = {
-        update = function(app, node, dt)
-            node.vars.counter = node.vars.counter + dt
-            if node.vars.counter > node.vars.interval then
-                node.vars.counter = 0
+    timers = {
+        {
+            interval = 1,
+            callback = function(app, node)
                 node.bg_color = COLOR.RANDOM()
             end
-        end
+        }
     },
     children = {
         flashy_rect,

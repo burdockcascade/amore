@@ -186,6 +186,17 @@ end
 -- Recursive function to notify nodes of events
 function APP.notify_node(node, event, data)
 
+    -- if the node has a timer, update it
+    if event == "update" and node.timers then
+        for _, timer in ipairs(node.timers) do
+            timer.counter = (timer.counter or 0) + data
+            if timer.counter >= timer.interval then
+                timer.callback(APP, node, timer.counter)
+                timer.counter = 0
+            end
+        end
+    end
+
     -- Call event if it exists
     if node.events and node.events[event] then
         node.events[event](APP, node, data)
