@@ -1,97 +1,256 @@
 require("src.amore")
 
-local scene = {
+local resources = {
+    fonts = {
+        bombing = { path = "assets/Bombing.ttf" },
+        playfair = { path = "assets/PlayfairDisplay-Regular.ttf" }
+    },
+    images = {
+        love2dwhale = { path = "assets/love2dwhale.png" }
+    },
+    spritesheets = {
+        simcity_terrain = { 
+            path = "assets/terrain.png",
+            dimensions = { width = 128, height = 256 },
+            divisions = { rows = 15, columns = 8 }
+        },
+        hero2d = {
+            path = "assets/2dhero.png",
+            dimensions = { width = 640, height = 470 },
+            divisions = { rows = 5, columns = 8 }
+        }
+    }
+}
+
+local main_scene = {
     type = "scene",
     visible = true,
     children = {
         {
-            type = NODE_TYPE.CIRCLE,
+            type = "rectangle",
             visible = true,
             paint = {
-                color = COLOR.RED,
-                mode = DRAW_MODE.LINE
+                color = COLOR.WHITE,
+                mode = DRAW_MODE.FILL,
             },
             transform = {
-                position = { x = 400, y = 400 },
-                radius = 100
+                position = { x = 175, y = 150 },
+                size = { width = 200, height = 200 },
+                origin = { x = 100, y = 100 },
+                rotation = 0.02
+            },
+            vars = {
+                counter = 0,
+                interval = 3
             },
             events = {
-                update = function(node, dt)
-                    node.transform.rotation = (node.transform.rotation or 0) - 0.1
+                update = function(app, node, dt)
+                    node.transform.rotation = node.transform.rotation + 0.02
                 end,
-            }
-        },
-        {
-            type = NODE_TYPE.RECTANGLE,
-            visible = true,
-            paint = {
-                color = COLOR.GREEN
-            },
-            transform = {
-                position = { x = 100, y = 100 },
-                size = { width = 200, height = 200 }
-            },
-            events = {
-                update = function(node, dt)
-                    node.transform.rotation = (node.transform.rotation or 0) - 0.05
-                end,
-                keypressed = function(node, event)
-                    node.visible = not node.visible
-                end
             },
             children = {
                 {
-                    type = NODE_TYPE.TEXT,
+                    type = "rectangle",
                     visible = true,
-                    text = {
-                        value = "Hello World!",
-                        size = 24
-                    },
                     paint = {
-                        color = COLOR.MAGENTA
+                        color = COLOR.RED,
+                        mode = DRAW_MODE.FILL,
                     },
                     transform = {
                         position = { x = 10, y = 10 },
-                        scale = { x = 1, y = 1 }
+                        size = { width = 100, height = 100 },
+                    },
+                    vars = {
+                        counter = 0,
+                        interval = 0.5
                     },
                     events = {
-                        update = function(node, dt)
-                            node.text.value = love.system.getOS()
+                        update = function(app, node, dt)
+                            node.vars.counter = node.vars.counter + dt
+                            if node.vars.counter > node.vars.interval then
+                                node.vars.counter = 0
+                                node.paint.color = COLOR.RANDOM()
+                            end
                         end
+                    },
+                    children = {
+                        {
+                            type = "rectangle",
+                            visible = true,
+                            paint = {
+                                color = COLOR.WHITE,
+                                mode = DRAW_MODE.FILL,
+                            },
+                            transform = {
+                                position = { x = 10, y = 10 },
+                                size = { width = 80, height = 80 },
+                            },
+                            vars = {
+                                counter = 0,
+                                interval = 0.2
+                            },
+                            events = {
+                                update = function(app, node, dt)
+                                    node.vars.counter = node.vars.counter + dt
+                                    if node.vars.counter > node.vars.interval then
+                                        node.vars.counter = 0
+                                        node.paint.color = COLOR.RANDOM()
+                                    end
+                                end
+                            },
+                        }
                     }
                 }
             }
         },
         {
-            type = NODE_TYPE.TEXT,
+            type = "scene",
             visible = true,
-            text = {
-                value = "I'm a text node!",
-                size = 96,
+            transform = {
+                position = { x = 300, y = 300 },
             },
+            children = {
+                {
+                    type = "sprite",
+                    notes = "fixme: rotation point",
+                    visible = true,
+                    paint = {
+                        texture = "love2dwhale",
+                    },
+                    transform = {
+                        origin = { x = 174/2, y = 174/2 },
+                        rotation = 0.01
+                    },
+                    events = {
+                        update = function(app, node, dt)
+                            node.transform.rotation = node.transform.rotation + 0.01
+                        end
+                    },
+                },
+                {
+                    type = "text",
+                    visible = true,
+                    paint = {
+                        color = COLOR.RED,
+                    },
+                    text = {
+                        value = "Love2D Whale",
+                        font = "playfair",
+                        size = 20,
+                    },
+                }
+            },
+        },
+        {
+            name = "Rotating Rectangle",
+            type = "rectangle",
+            visible = true,
             paint = {
-                color = COLOR.BLUE
+                color = COLOR.RANDOM(),
+                mode = DRAW_MODE.FILL,
             },
             transform = {
-                position = { x = 110, y = 110 },
-                scale = { x = 4, y = 4 }
+                position = { x = 500, y = 400 },
+                size = { width = 200, height = 200 },
+                origin = { x = -100, y = -100 },
             },
             vars = {
-                counter = 0
+                counter = 0,
+                interval = 3
             },
             events = {
-                update = function(node, dt)
+                update = function(app, node, dt)
+                    node.transform.rotation = (node.transform.rotation or 0) - 0.01
                     node.vars.counter = node.vars.counter + dt
-                    if node.vars.counter > 1 then
+                    if node.vars.counter > node.vars.interval then
+                        node.vars.counter = 0
+                        node.paint.color = COLOR.RANDOM()
+                    end
+                end
+            },
+            children = {
+                {
+                    type = "text",
+                    visible = true,
+                    text = {
+                        value = "Hello World!"
+                    },
+                    paint = {
+                        color = COLOR.WHITE,
+                    },
+                    transform = {
+                        position = { x = 100, y = 100 },
+                        origin = { x = 50, y = 50 },
+                        rotation = 0.1
+                    },
+                    vars = {
+                        counter = 0,
+                        interval = 3
+                    },
+                    events = {
+                        update = function(app, node, dt)
+                            node.vars.counter = node.vars.counter + dt
+                            if node.vars.counter > node.vars.interval then
+                                node.vars.counter = 0
+                                node.paint.color = COLOR.RANDOM()
+                            end
+                            node.transform.rotation = node.transform.rotation + 0.1
+                        end,
+                    }
+                }
+            }
+        },
+        {
+            name = "Blinking Text",
+            type = "text",
+            visible = true,
+            text = {
+                value = "Love2D",
+                font = "bombing",
+                size = 150,
+            },
+            paint = {
+                color = COLOR.RANDOM(),
+            },
+            transform = {
+                position = { x = 100, y = 200 }
+            },
+            vars = {
+                counter = 0,
+                interval = 0.5
+            },
+            events = {
+                update = function(app, node, dt)
+                    node.vars.counter = node.vars.counter + dt
+                    if node.vars.counter > node.vars.interval then
                         node.vars.counter = 0
                         node.visible = not node.visible
                     end
                 end
             }
-        }
+        },
+        {
+            name = "Heads up display",
+            type = "text",
+            visible = true,
+            text = {
+                value = "Hello Mouse!"
+            },
+            paint = {
+                color = COLOR.WHITE,
+            },
+            transform = {
+                position = { x = 10, y = 10 }
+            },
+            events = {
+                update = function(app, node, dt)
+                    local x, y = love.mouse.getPosition()
+                    node.text.value = "Mouse position: " .. x .. ", " .. y
+                end
+            }
+        },
     }
 }
 
-GLOBAL_STATE = {
-    current_scene = scene
-}
+-- Start the scene
+START(resources, main_scene)
